@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS `_referir`;
+CREATE TABLE IF NOT EXISTS `_referir` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `father` char(100) NOT NULL,
+  `user` char(100) NOT NULL,
+  `inserted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
