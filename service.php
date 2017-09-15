@@ -89,7 +89,7 @@ class Referir extends Service
 		$granpa = $connection->query("SELECT father FROM _referir WHERE user='$father'");
 		if (isset($granpa[0])) {
 			$connection->query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE email='{$granpa[0]->father}'");
-			$this->utils->addNotification($granpa[0]->father, "referir", "Su referido {$response->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}");
+			$this->utils->addNotification($granpa[0]->father, "referir", "Su referido {$request->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}");
 		}
 
 		// insert invitation
