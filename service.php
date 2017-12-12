@@ -31,13 +31,13 @@ class Referir extends Service
 		$children = array();
 		$res = $connection->query("SELECT user FROM _referir WHERE father='{$request->email}'");
 		foreach ($res as $child) {
-			// calculate amount earned
-			$count = $connection->query("SELECT COUNT(id) AS nbr FROM _referir WHERE father='{$child->user}'");
+			// calculate number of Grandsons
+			$count = $connection->query("SELECT COUNT(id) AS nbr FROM _referir WHERE father='{$child->user}'")[0]->nbr;
 
 			$refered = new stdClass();
 			$refered->person = $this->utils->getUsernameFromEmail($child->user);
-			$refered->referred = $count[0]->nbr;
-			$refered->earnings = $count[0]->nbr * $this->profit_by_nieto;
+			$refered->referred = $count;
+			$refered->earnings = $this->profit_by_child + ($count * $this->profit_by_nieto);
 			$children[] = $refered;
 		}
 

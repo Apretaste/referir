@@ -3,14 +3,15 @@
 
 {space10}
 
-<h1>Sus referidos</h1>
+<h1>Sus referidos ({$children|count})</h1>
 {if $children}
+	<p>Consiga que sus amigos instalen la app, inserten su @username o email en este servicio, y ambos ganar&aacute;n &sect;{$profit_by_child}. Adem&aacute;s, por cada persona que ellos refieran usted ganar&aacute; &sect;{$profit_by_nieto} extras.</p>
 	<p>A continuaci&oacute;n las personas que usted ha referido, el n&uacute;mero de amigos que ellos han referido, y la cantidad que ha ganado por cada uno.</p>
 	<table width="100%">
 		<tr bgcolor="lightgrey" align="center">
 			<th>Persona</th>
-			<th>Referidos</th>
-			<th>Ganancia</th>
+			<th>Ha referido</th>
+			<th>Su ganancia</th>
 		</tr>
 		{foreach from=$children item=child}
 		<tr align="center">
