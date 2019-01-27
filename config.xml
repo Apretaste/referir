@@ -1,6 +1,0 @@
-<service>
-	<serviceName>referir</serviceName>
-	<serviceDescription>Refiere a un amigo a familiar que le invito a usar Apretaste y gana creditos y buen karma</serviceDescription>
-	<creatorEmail>salvi@apretaste.com</creatorEmail>
-	<serviceCategory>otros</serviceCategory>
-</service>

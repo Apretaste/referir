@@ -1,0 +1,11 @@
+<h1>Empiece a ganar cr&eacute;ditos</h1>
+<p>D&iacute;ganos el @username o email de quien le habl&oacute; de Apretaste y ambos ganar&aacute;n &sect;<%=profit_by_child%>. Luego puede ganar m&aacute;s cr&eacute;dito refiriendo a otras personas. Si nadie le referi&oacute; solo usted podr&aacute; obtener cr&eacute;dito.</p>
+
+<center>
+	<button class="btn waves-effect waves-light green" onclick="apretaste.send({'command':'REFERIR PERSONA'});" title="Escriba el @username o email de la persona que le refirio">
+		<input id="persona">&iquest;Qui&eacute;n le refiri&oacute;?
+	</button>
+	<button class="btn waves-effect waves-light gray" onclick="apretaste.send({'command':'REFERIR PERSONA @apretaste'});">
+		Nadie me referi&oacute;
+	</button>
+</center>
