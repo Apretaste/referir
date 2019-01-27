@@ -19,7 +19,7 @@ class Referir extends Service
 		if(empty($res[0]->nbr)) {
 			$response = new Response();
 			$response->setResponseSubject("Empiece a ganar saldo");
-			$response->createFromTemplate("home.tpl", array('profit_by_child'=>$this->profit_by_child));
+			$response->createFromTemplate("home.ejs", array('profit_by_child'=>$this->profit_by_child));
 			return $response;
 		}
 
@@ -52,7 +52,7 @@ class Referir extends Service
 		// create the confirmation for the invitor
 		$response = new Response();
 		$response->setResponseSubject("Sus referidos");
-		$response->createFromTemplate("referidos.tpl", $responseContent);
+		$response->createFromTemplate("referidos.ejs", $responseContent);
 		return $response;
 	}
 
