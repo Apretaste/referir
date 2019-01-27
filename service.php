@@ -1,6 +1,6 @@
 <?php
 
-class Referir extends Service
+class Service
 {
 	private $profit_by_child = 0.25;
 	private $profit_by_nieto = 0.05;
@@ -11,7 +11,7 @@ class Referir extends Service
 	 * @param Request
 	 * @return Response
 	 */
-	public function _main(Request $request)
+	public function _main(Request $request, Response &$response )
 	{
 		// check if you haven been invited
 		$connection = new Connection();
@@ -50,9 +50,8 @@ class Referir extends Service
 		);
 
 		// create the confirmation for the invitor
-		$response = new Response();
-		$response->setResponseSubject("Sus referidos");
-		$response->createFromTemplate("referidos.tpl", $responseContent);
+		//$response->setResponseSubject("Sus referidos");
+		$response->setTemplate("referidos.ejs", $responseContent);
 		return $response;
 	}
 
