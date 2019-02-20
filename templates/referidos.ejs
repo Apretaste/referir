@@ -9,7 +9,7 @@
     <div class = "col s12 m12 xl12">
         <h1>Sus referidos (<%= children.length %>)</h1>
         <% if (children.length > 0) { %>
-        <p>Consiga que sus amigos instalen la app, inserten su @username o email en este servicio, y ambos ganar&aacute;n &sect;{$profit_by_child}. Adem&aacute;s, por cada persona que ellos refieran usted ganar&aacute; &sect;<%= profit_by_nieto %>} extras.</p>
+        <p>Consiga que sus amigos instalen la app, inserten su @username o email en este servicio, y ambos ganar&aacute;n &sect; <%= $profit_by_child %>. Adem&aacute;s, por cada persona que ellos refieran usted ganar&aacute; &sect;<%= profit_by_nieto %> extras.</p>
         <p>A continuaci&oacute;n las personas que usted ha referido, el n&uacute;mero de amigos que ellos han referido, y la cantidad que ha ganado por cada uno.</p>
         <table>
             <thead>
