@@ -68,7 +68,7 @@ class Service
 	{
 		// get the email for the user and father
 		$user = $request->person->email;
-		$person = Utils::getPerson($request->input->data->username);
+		$person = Utils::getPerson($request->input->data->query);
 		if($person !== false)
 			$father = $request->input->data->query;
 		else

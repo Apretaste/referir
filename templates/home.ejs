@@ -8,7 +8,7 @@
     <div class = "col s12 m12 xl12">
         <h2>&iquest;Qui&eacute;n le refiri&oacute;?</h2>
         <input id="persona" class="">
-        <button class="btn waves-effect waves-light green" onclick="apretaste.send({command:'REFERIR PERSONA', date: {username:$('#persona').val()}});" title="Escriba el @username o email de la persona que le refirio">
+        <button class="btn waves-effect waves-light green" onclick="apretaste.send({command:'REFERIR PERSONA', data: {query: $('#persona').val()}});" title="Escriba el @username o email de la persona que le refirio">
             Me refiri&oacute;
         </button>
     </div>
