@@ -2,38 +2,30 @@
 
 class Service
 {
-	private $profit_by_child = 0.25;
+	private $profit_by_child = 0.50;
 	private $profit_by_nieto = 0.05;
 
 	/**
-	 * Function excecuted once the service Letra is called
+	 * Show the form or the list of referals
 	 *
 	 * @param Request
 	 * @param Response
-	 *
 	 * @return void | Response
 	 */
-	public function _main(Request $request, Response &$response)
+	public function _main(Request $request, Response $response)
 	{
-		$response->setLayout('referir.ejs');
-
 		// check if you haven been invited
 		$res = Connection::query("SELECT COUNT(id) AS nbr FROM _referir WHERE user='{$request->person->email}'");
-		if(empty($res[0]->nbr))
-		{
-			$response->setTemplate('home.ejs', ['profit_by_child' => $this->profit_by_child]);
-			return;
-		}
+		if(empty($res[0]->nbr)) return $response->setTemplate('home.ejs', ['profit_by_child'=>$this->profit_by_child]);
 
 		// get your father's username
 		$res = Connection::query("SELECT father FROM _referir WHERE user='{$request->person->email}'");
-		$father = Utils::getPerson($res[0]->father)->username;
+		$father = Connection::query("SELECT username FROM person WHERE email='{$res[0]->father}'")[0]->username;
 
 		// get your children and money earned by each
 		$children = [];
 		$res = Connection::query("SELECT user FROM _referir WHERE father='{$request->person->email}'");
-		foreach($res as $child)
-		{
+		foreach($res as $child) {
 			// calculate number of Grandsons
 			$count = Connection::query("SELECT COUNT(id) AS nbr FROM _referir WHERE father='{$child->user}'")[0]->nbr;
 
@@ -46,6 +38,7 @@ class Service
 
 		// create returning array
 		$responseContent = [
+			"referred" => $request->person->username != $father,
 			"father" => $father,
 			"children" => $children,
 			"profit_by_child" => $this->profit_by_child,
@@ -61,44 +54,42 @@ class Service
 	 *
 	 * @param Request $request
 	 * @param Response $response
-	 *
 	 * @return void
 	 */
-	public function _persona(Request $request, Response &$response)
+	public function _amigo(Request $request, Response $response)
 	{
 		// get the email for the user and father
-		$user = $request->person->email;
-		$person = Utils::getPerson($request->input->data->query);
-		if($person !== false)
-			$father = $request->input->data->query;
-		else
-		{
-			// error if the father do not exist
-			$response->setTemplate( "missing.ejs", ["request" => $request ]);
-			return;
-		}
+		$father = empty($request->input->data->username) ? $request->person : Utils::getPerson($request->input->data->username);
+
+		// display message if the father do not exist
+		if(empty($father)) return $response->setTemplate('message.ejs', ["username"=>$request->input->data->username]);
 
 		// if the was already invited, do not continue
-		$res = Connection::query("SELECT COUNT(id) AS nbr FROM _referir WHERE user='$user'");
+		$res = Connection::query("SELECT COUNT(id) AS nbr FROM _referir WHERE user='{$request->person->email}'");
 		if($res[0]->nbr) return;
 
 		// add credit to you and your father
-		Connection::query("UPDATE person SET credit=credit+{$this->profit_by_child} WHERE email='$user' OR email='$father'");
+		Connection::query("UPDATE person SET credit=credit+{$this->profit_by_child} WHERE id='{$request->person->id}' OR id='{$father->id}'");
 
-		// if you have a grandfather, give it credits and send notification
-		$granpa = Connection::query("SELECT father FROM _referir WHERE user='$father'");
-		if(isset($granpa[0]))
-		{
-			Connection::query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE email='{$granpa[0]->father}'");
-			Utils::addNotification($granpa[0]->father, "referir", "Su referido {$request->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}", "REFERIR");
+		// if you have a grandfather
+		$granpa = Connection::query("SELECT father FROM _referir WHERE user='{$father->email}'");
+		if(count($granpa)) {
+			// get the ID of the grandfather
+			$granpaId = Connection::query("SELECT id FROM person WHERE email='{$granpa[0]->father}'")[0]->id;
+
+			// give credits to the grandfather
+			Connection::query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE id='$granpaId'");
+
+			// send the grandfather a notification
+			Utils::addNotification($granpaId, "Su referido @{$request->person->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}", '{"command":"REFERIR"}');
 		}
 
-		// insert invitation
-		Connection::query("INSERT INTO _referir (user,father) VALUES ('$user','$father')");
+		// insert the invitation
+		Connection::query("INSERT INTO _referir (user,father) VALUES ('{$request->person->email}','{$father->email}')");
 
 		// mandar notificaciones a ambos
-		Utils::addNotification($user, "referir", "Usted ha sido referido a Apretaste, y le hemos regalado §{$this->profit_by_child}", "REFERIR");
-		Utils::addNotification($father, "referir", "Usted ha recibido §{$this->profit_by_child} por referir a {$request->username} a usar Apretaste", "REFERIR");
+		Utils::addNotification($request->person->id, "Usted ha sido referido a Apretaste, y le hemos regalado §{$this->profit_by_child}", '{"command":"REFERIR"}');
+		Utils::addNotification($father->id, "Usted ha recibido §{$this->profit_by_child} por referir a @{$request->person->username} a usar Apretaste", '{"command":"REFERIR"}');
 
 		// return the main response
 		$this->_main($request, $response);
