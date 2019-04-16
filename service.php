@@ -20,7 +20,7 @@ class Service
 
 		// get your father's username
 		$res = Connection::query("SELECT father FROM _referir WHERE user='{$request->person->email}'");
-		$father = Connection::query("SELECT username FROM person WHERE email='{$res[0]->father}'")[0]->username;
+		$father = !empty($res) ? Connection::query("SELECT username FROM person WHERE email='{$res[0]->father}'")[0]->username : false;
 
 		// get your children and money earned by each
 		$children = [];
@@ -38,7 +38,7 @@ class Service
 
 		// create returning array
 		$responseContent = [
-			"referred" => $request->person->username != $father,
+			"referred" => $father && $request->person->username != $father,
 			"father" => $father,
 			"children" => $children,
 			"profit_by_child" => $this->profit_by_child,
