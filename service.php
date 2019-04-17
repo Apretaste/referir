@@ -74,9 +74,10 @@ class Service
 
 		// if you have a grandfather
 		$granpa = Connection::query("SELECT father FROM _referir WHERE user='{$father->email}'");
-		if(count($granpa)) {
+		if(!empty($granpa)) {
+			$granpa = $granpa[0]->father;
 			// get the ID of the grandfather
-			$granpaId = Connection::query("SELECT id FROM person WHERE email='{$granpa[0]->father}'")[0]->id;
+			$granpaId = Connection::query("SELECT id FROM person WHERE email='$granpa'")[0]->id;
 
 			// give credits to the grandfather
 			Connection::query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE id='$granpaId'");
