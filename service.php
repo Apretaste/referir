@@ -20,7 +20,8 @@ class Service
 
 		// get your father's username
 		$res = Connection::query("SELECT father FROM _referir WHERE user='{$request->person->email}'");
-		$father = Connection::query("SELECT username FROM person WHERE email='{$res[0]->father}'")[0]->username;
+		$father = Connection::query("SELECT username FROM person WHERE email='{$res[0]->father}'");
+		$father = !empty($father) ? $father[0]->username: false;
 
 		// get your children and money earned by each
 		$children = [];
@@ -38,7 +39,7 @@ class Service
 
 		// create returning array
 		$responseContent = [
-			"referred" => $request->person->username != $father,
+			"referred" => $father && $request->person->username != $father,
 			"father" => $father,
 			"children" => $children,
 			"profit_by_child" => $this->profit_by_child,
@@ -73,9 +74,10 @@ class Service
 
 		// if you have a grandfather
 		$granpa = Connection::query("SELECT father FROM _referir WHERE user='{$father->email}'");
-		if(count($granpa)) {
+		if(!empty($granpa)) {
+			$granpa = $granpa[0]->father;
 			// get the ID of the grandfather
-			$granpaId = Connection::query("SELECT id FROM person WHERE email='{$granpa[0]->father}'")[0]->id;
+			$granpaId = Connection::query("SELECT id FROM person WHERE email='$granpa'")[0]->id;
 
 			// give credits to the grandfather
 			Connection::query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE id='$granpaId'");
