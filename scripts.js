@@ -1,3 +1,7 @@
+function showToast(text) {
+  M.toast({html: text});
+}
+
 function send() {
 	// get the values
 	var checked = $('#check').prop('checked')
@@ -5,14 +9,14 @@ function send() {
 
 	// check username is not empty
 	if( !checked && !username) {
-		M.toast({html: 'Díganos quien le refirió'});
+    showToast('Díganos quien le refirió');
 		return false;
 	}
 
 	// send the request
 	apretaste.send({
 		command: "REFERIR AMIGO", 
-		data: {"username": username},
+		data: {username: username},
 		redirect: true});
 }
 
