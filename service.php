@@ -88,7 +88,8 @@ class Service
 			Connection::query("UPDATE person SET credit=credit+{$this->profit_by_nieto} WHERE id='$granpaId'");
 
 			// send the grandfather a notification
-			Utils::addNotification($granpaId, "Su referido @{$request->person->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}", '{"command":"REFERIR"}');
+			if ($granpaId * 1 > 0)
+				Utils::addNotification($granpaId, "Su referido @{$request->person->username} ha invitado a alguien a usar Apretaste, y le hemos regalado §{$this->profit_by_nieto}", '{"command":"REFERIR"}');
 		}
 
 		// insert the invitation
