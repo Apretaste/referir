@@ -20,7 +20,31 @@ function send() {
 		redirect: true});
 }
 
+function sendInvitation() {
+	var email = $('#email').val();
+	if(isEmail(email)){
+		apretaste.send({
+			'command': 'REFERIR INVITAR',
+			'data': {'email':email}
+		})
+	}
+	else showToast("Ingrese un email valido");
+}
+
 function toggle() {
 	if($('#check').prop('checked')) $('#input').slideUp()
 	else $('#input').slideDown()
+}
+
+function isEmail(email) {
+	var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	if(!regex.test(email)) {
+		return false;
+	}else{
+		return true;
+	}
+}
+
+function sendInvitationCallback() {
+	
 }

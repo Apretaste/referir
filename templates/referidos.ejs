@@ -1,34 +1,83 @@
 <div class="row">
-	<div class = "col s12">
+	<div class="col s12">
 		<% if (referred) { %>
 			<h1>Quién lo refirió</h1>
-			<p>Usted fué referido por <a href="#" onclick="apretaste.send({command: 'PERFIL', data: {username: father}});">@<%= father %></a> y ambos ganaron §<%= profit_by_child %>.</p>
+			<p>Usted fué referido por <a href="#"
+										 onclick="apretaste.send({command: 'PERFIL', data: {username: father}});">@<%= father %></a>
+				y ambos ganaron §<%= profit_by_child %>.</p>
+		<% } %>
+
+		<div class="row">
+			<div class="col s12">
+				<h2>Invitar a alguien a usar la App</h2>
+				<p>Envíe un correo invitando a alguien a usar Apretaste, si la persona se une a la app, ganarás §1 de
+					credito.</p>
+
+				<div class="valign-wrapper">
+					<div class="input-field col s10 m11" style="margin: 0; padding: 0;">
+						<input type="email" id="email" class="validate" maxlength="40">
+						<label for="message">Email</label>
+					</div>
+					<div class="col s2 m1 center-align"><i class="material-icons" onclick="sendInvitation()">send</i>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<% if (invitations.length > 0) { %>
+			<h1>Sus invitaciones enviadas</h1>
+			<p>Presione el email para enviarla de nuevo si han pasado mas de 3 dias.</p>
+			<table class="centered striped">
+				<thead>
+				<tr>
+					<th>Email</th>
+					<th>Fecha</th>
+					<th>Aceptada</th>
+				</tr>
+				</thead>
+				<tbody>
+				<% invitations.forEach(function(invitation) { %>
+					<tr>
+						<td><a href="#!"
+							   onclick="apretaste.send({command:'REFERIR INVITAR', data:{email:'<%= invitation.email_to %>'}})"><%= invitation.email_to %></a>
+						</td>
+						<td><%= invitation.send_date %></td>
+						<td><%= invitation.acepted ? "Si" : "No" %></td>
+					</tr>
+				<% }); %>
+				</tbody>
+			</table>
 		<% } %>
 
 		<h1>Sus referidos (<%= children.length %>)</h1>
 		<% if (children.length > 0) { %>
-			<p>Haga que sus amigos le refieran y ambos ganarán §<%= profit_by_child %>. Además, por cada usuario que ellos refieran usted ganará §<%= profit_by_nieto %> más.</p>
-			<p>A continuación quienes usted ha referido, el número de amigos que ellos referieron, y la cantidad que ha ganado por cada uno.</p>
+			<p>Haga que sus amigos le refieran y ambos ganarán §<%= profit_by_child %>. Además, por cada usuario que
+				ellos refieran usted ganará §<%= profit_by_nieto %> más.</p>
+			<p>A continuación quienes usted ha referido, el número de amigos que ellos referieron, y la cantidad que ha
+				ganado por cada uno.</p>
 			<table class="centered striped">
 				<thead>
-					<tr>
-						<th>Amigo</th>
-						<th>Refirió</th>
-						<th>Ganancia</th>
-					</tr>
+				<tr>
+					<th>Amigo</th>
+					<th>Refirió</th>
+					<th>Ganancia</th>
+				</tr>
 				</thead>
 				<tbody>
 				<% children.forEach(function(child) { %>
-				<tr>
-					<td><a href="#!" onclick="apretaste.send({command:'PERFIL', data:{username:'<%= child.person %>'}})">@<%= child.person %></a></td>
-					<td><%= child.referred %></td>
-					<td>§<%= child.earnings %></td>
-				</tr>
+					<tr>
+						<td><a href="#!"
+							   onclick="apretaste.send({command:'PERFIL', data:{username:'<%= child.person %>'}})">@<%= child.person %></a>
+						</td>
+						<td><%= child.referred %></td>
+						<td>§<%= child.earnings %></td>
+					</tr>
 				<% }); %>
 				</tbody>
 			</table>
 		<% } else { %>
-			<p><b>Usted aún no tiene referidos.</b> Haga que sus amigos inserten su @username o email en este servicio, y ambos ganarán §<%= profit_by_child %>.</p>
+			<p><b>Usted aún no tiene referidos.</b> Haga que sus amigos inserten su @username o email en este servicio,
+				y ambos ganarán §<%= profit_by_child %>.</p>
 			<p>Por cada persona que sus referidos inviten usted ganará §<%= profit_by_nieto %> extras.</p>
 		<% } %>
 	</div>
