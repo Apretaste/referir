@@ -1,0 +1,7 @@
+td:first-child {
+	word-break: break-all;
+}
+
+table{
+	font-size: smaller;
+}

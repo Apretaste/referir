@@ -1,25 +1,48 @@
 <div class="row">
-	<div class="col s12">
-		<h2>¿Quién le refirió?</h2>
-		<p>Díganos el @username o email de quien le habló de Apretaste y ambos ganarán §<%= profit_by_child %>.</p>
+    <div class="col s12">
+        <h1>Invite y gane</h1>
+        <p>Invite a sus amigos y familiares. Ambos ganarán §0.5 cuando su invitado use la app por primera vez.</p>
+        <p>Inserte el email de su contacto, nosotros le dejaremos saber que usted le invitó.</p>
 
-		<!-- input -->
-		<div id="input" class="input-field">
-			<input id="username" type="text">
-			<label for="username">Insertar @username o email</label>
-		</div>
+        <div class="input-field" style="margin: 0; padding: 0;">
+            <input type="email" id="email" class="validate" maxlength="40">
+            <label for="message">Email a invitar</label>
+        </div>
 
-		<!-- checkbox -->
-		<p>
-			<label>
-				<input id="check" type="checkbox" onclick="toggle()" />
-				<span>Nadie me refirió</span>
-			</label>
-		</p>
-	</div>
-</div>
+        <div class="fixed-action-btn">
+            <a onclick="sendInvitation()" class="btn-floating btn-large"><i class="material-icons">send</i></a>
+        </div>
 
-<!-- SUBMIT -->
-<div class="fixed-action-btn">
-	<a class="btn-floating btn-large waves-effect waves-light green" href="#!" onclick="send()"><i class="material-icons">send</i></a>
+        <% if (invitations.length > 0) { %>
+        <%var total = 0;%>
+            <p>A continuación sus invitados, y el estado de cada invitación.</p>
+            <table class="striped">
+                <thead>
+                <tr>
+                    <th>Invitado</th>
+                    <th>Fecha</th>
+                    <th>Ganancia</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% invitations.forEach(function(invitation) { %>
+                    <%total += invitation.accepted*0.5%>
+                    <tr>
+                        <td><%= invitation.email_to %></td>
+                        <td><%= invitation.send_date %></td>
+                        <td>§<%= invitation.accepted*0.5%></td>
+                        <td><%if(invitation.accepted == 0){%><a onclick="apretaste.send({command:'REFERIR INVITAR', data:{email:'<%= invitation.email_to %>'}})">Recordar</a><%}%></td>
+                    </tr>
+                <% }); %>
+                <tr>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td>§<%=total%></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
 </div>
