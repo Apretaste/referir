@@ -28,7 +28,7 @@ function sendInvitation() {
 			'data': {'email':email}
 		})
 	}
-	else showToast("Ingrese un email valido");
+	else showToast("Ingrese un email václido");
 }
 
 function toggle() {
@@ -43,8 +43,4 @@ function isEmail(email) {
 	}else{
 		return true;
 	}
-}
-
-function sendInvitationCallback() {
-	
 }

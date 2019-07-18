@@ -11,7 +11,7 @@ class Service
 	 */
 	public function _main(Request $request, Response $response)
 	{
-		$invitations = q("SELECT * FROM _email_invitations WHERE id_from = '{$request->person->id}'");
+		$invitations = q("SELECT *, TIMESTAMPDIFF(DAY,send_date, NOW()) AS days FROM _email_invitations WHERE id_from = '{$request->person->id}'");
 		foreach ($invitations as $invitation){
 			$invitation->send_date = date('m/d/Y', strtotime($invitation->send_date));
 		}
@@ -36,7 +36,7 @@ class Service
 					$content = [
 						"header" => "Lo sentimos",
 						"icon" => "sentiment_very_dissatisfied",
-						"text" => "Ya enviaste una invitación a $email hace menos de 3 dias, por favor espera antes de reenviar la invitación."
+						"text" => "Ya enviaste una invitación a $email hace menos de 3 días, por favor espera antes de reenviar la invitación."
 					];
 
 					$response->setTemplate('message.ejs', $content);
@@ -44,24 +44,24 @@ class Service
 				}
 			}
 
-			$supportEmail = q("SELECT email FROM delivery_input WHERE environment='support' ORDER BY received ASC")[0].'@gmail.com';
-			$blogLink = "http://bit.ly/2YIF7wq";
-			$downloadLinkApk = "http://bit.ly/2XVsT6y";
-			$downloadLinkPlay = "http://bit.ly/32gPZns";
+			$supportEmail = q("SELECT email FROM delivery_input WHERE environment='support' ORDER BY received ASC")[0]->email.'@gmail.com';
+			$downloadLink = "http://bit.ly/32gPZns";
+			$name = !empty($request->person->first_name) ? $request->person->first_name : '@'.$request->person->username;
 
 			$invitationEmail = new Email();
 			$invitationEmail->to = $email;
-			$invitationEmail->subject = "Invitacion de @{$request->person->username}";
-			$invitationEmail->body = "<p>Has sido invitado por <b>@{$request->person->username}</b>, a ser parte de la emocionante comunidad de Ap!</p>
+			$invitationEmail->subject = "$name te ha invitado a la app";
+			$invitationEmail->body = "<p>Algo debes tener, porque <b>@{$request->person->username}</b> te invitó a ser parte nuestra vibrante comunidad en Ap!</p>
 			
-			<p>Somos la única app que ofrece internet en Cuba a través del correo nauta, y la que más ahorra tus datos móviles.<br>
-			Es muy fácil, solo descarga la app en el siguiente enlace <a href='$downloadLinkPlay'>$downloadLinkPlay</a> e ingresa tu dirección de correo.</p>
+			<p>Somos la única app que ofrece docena de servicios útils en Cuba a través de Datos, WiFi y correo Nauta, y la que más ahorra tus megas. Además, cada semana hacemos rifas, concursos y encuestas, en las cuales te ganas teléfonos, tablets y recargas.</p>
 			
-			<p>Aprovecha y recarga tu celular con nuestro sistema de créditos: con solo aceptar esta invitación ganarás tú y quien te invita. Más de 21 servicios te esperan para hacer de tu vida en Cuba, un poco más fácil y muy entretenida.</p>
+			<p>Descarga la app desde el siguiente enlace, entra usando este correo, y ambos $name y tú ganarán $0.50 de crédito para comprar dentro de la app.</p>
 			
-			<p>Si presentas alguna dificultad, inquietud, duda o sugerencia, escribe a Soporte al siguiente email: <a href='mailto:$supportEmail'>$supportEmail</a>. Siempre estamos atentos a ayudarte!!!</p>
+			<p>$downloadLink</p>
 			
-			<p>Visita nuestro blog <a href='$blogLink'>$blogLink</a> para estar al tanto de las novedades de Ap! y noticias del acontecer nacional e internacional.</p>";
+			<p>Si presentas alguna dificultad, escríbenos a $supportEmail y siempre estaremos atentos para ayudarte.</p>
+			
+			<p>Bienvenido a nuestra familia!</p>";
 
 			$invitationEmail->send();
 
@@ -71,7 +71,7 @@ class Service
 			$content = [
 				"header" => "Su invitación ha sido enviada",
 				"icon" => "sentiment_very_satisfied",
-				"text" => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une seras notificado y recibiras §0.5 de credito."
+				"text" => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
 			];
 
 			$response->setTemplate('message.ejs', $content);
