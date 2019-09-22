@@ -20,7 +20,8 @@ function send() {
   apretaste.send({
     command: "REFERIR AMIGO",
     data: {
-      username: username
+      username: username,
+      service: service
     },
     redirect: true
   });
@@ -33,7 +34,8 @@ function sendInvitation() {
     apretaste.send({
       'command': 'REFERIR INVITAR',
       'data': {
-        'email': email
+        'email': email,
+        'service': service
       }
     });
   } else showToast("Ingrese un email válido");
