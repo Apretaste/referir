@@ -21,7 +21,7 @@
     </style>
 <% } %>
 
-<div class="row" style="margin-top: 1.2rem;">
+<div class="row" style="margin-top: 1.2rem; margin-bottom: 4rem;">
     <div class="col s12">
         <h1>Invite y gane</h1>
         <p>Invite a sus amigos y familiares. Ambos ganarán §0.5 cuando su invitado use la app por primera vez.</p>
@@ -58,7 +58,7 @@
                             <% if(invitation.accepted == 0 && invitation.days >= 3){ %>
                                 <br>
                                 <small>
-                                    <a onclick="apretaste.send({command:'REFERIR INVITAR', data:{email:'<%= invitation.email_to %>'}})">Recordar</a>
+                                    <a onclick="apretaste.send({command:'REFERIR INVITAR', data:{email:'<%= invitation.email_to %>', 'service': service}})">Recordar</a>
                                 </small>
                             <% } %>
                         </td>

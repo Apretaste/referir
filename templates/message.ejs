@@ -16,5 +16,6 @@
 </div>
 
 <div class="fixed-action-btn">
-    <a onclick="apretaste.send({'command':'REFERIR'})" class="btn-floating btn-large"><i class="material-icons">arrow_back</i></a>
+    <%if(service) service = ' ' + service;%>
+    <a onclick="apretaste.send({'command':'REFERIR<%= service %>'})" class="btn-floating btn-large"><i class="material-icons">arrow_back</i></a>
 </div>
