@@ -1,21 +1,13 @@
-<% if(service != null && service == "bolita"){ %>
-    <style>
-        body { color: white; background: #263238; }
-        h1, h2, body, input, input::placeholder { color: white }
-        h1 { font-size: 27px; margin: 0; }
-        h2 { font-size: 20px; margin-top: .5rem; }
-    </style>
-<% } %>
-
-<div class="row" style="margin-top: 1.2rem">
-    <div class="col s12 center">
-        <h1><%= header %></h1>
-        <i class="material-icons large"><%= icon %></i>
-        <p><%= text %></p>
-    </div>
+<div class="row">
+	<div class="col s12 center">
+		<h1><%= header %></h1>
+		<i class="material-icons large"><%= icon %></i>
+		<p><%= text %></p>
+	</div>
 </div>
 
 <div class="fixed-action-btn">
-    <%if(service) service = ' ' + service;%>
-    <a onclick="apretaste.send({'command':'REFERIR<%= service %>'})" class="btn-floating btn-large"><i class="material-icons">arrow_back</i></a>
+	<a onclick="apretaste.send({'command':'REFERIR', data:{'theme':'<%= theme %>'}})" class="btn-floating btn-large">
+		<i class="material-icons">arrow_back</i>
+	</a>
 </div>

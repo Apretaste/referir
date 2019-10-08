@@ -1,57 +1,24 @@
 "use strict";
 
-function showToast(text) {
-  M.toast({
-    html: text
-  });
+$(document).ready(function(){
+	$('.tabs').tabs();
+});
+
+function invite(theme) {
+	var email = $('#email').val();
+	remind(email, theme);
 }
 
-function send() {
-  // get the values
-  var checked = $('#check').prop('checked');
-  var username = $('#username').val(); // check username is not empty
-
-  if (!checked && !username) {
-    showToast('Díganos quien le refirió');
-    return false;
-  } // send the request
-
-
-  apretaste.send({
-    command: "REFERIR AMIGO",
-    data: {
-      username: username,
-      service: service
-    },
-    redirect: true
-  });
-}
-
-function sendInvitation() {
-  var email = $('#email').val();
-
-  if (isEmail(email)) {
-    apretaste.send({
-      'command': 'REFERIR INVITAR',
-      'data': {
-        'email': email,
-        'service': service
-      }
-    });
-  } else showToast("Ingrese un email válido");
-}
-
-function toggle() {
-  if ($('#check').prop('checked')) $('#input').slideUp();else $('#input').slideDown();
+function remind(email, theme) {
+	if (isEmail(email)) {
+		apretaste.send({
+			'command': 'REFERIR INVITAR',
+			'data': {'email':email, 'theme':theme}
+		});
+	} else M.toast({'html':"Ingrese un email válido"});
 }
 
 function isEmail(email) {
-  var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-
-  if (!regex.test(email)) {
-    return false;
-  } else {
-    return true;
-  }
+	var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+	return regex.test(email);
 }
-

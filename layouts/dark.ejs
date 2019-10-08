@@ -1,0 +1,41 @@
+<style>
+	body, .tab { 
+		color: white; 
+		background: #263238; 
+	}
+
+	h1, h2, body, input, input::placeholder{ 
+		color: white 
+	}
+
+	h1 { 
+		font-size: 27px; margin: 0; 
+	}
+
+	h2 { 
+		font-size: 20px; margin-top: .5rem; 
+	}
+
+	a, label.active { 
+		color: #FFA420 !important;
+	}
+
+	input:focus, input.valid{
+		box-shadow: none !important;
+		border-bottom: 1px solid #FFA420 !important;
+	}
+
+	table.striped>tbody>tr:nth-child(odd) {
+		background: transparent;
+	}
+
+	.fixed-action-btn > a{
+		background: #455A64;
+	}
+</style>
+
+<!-- DARK THEME -->
+<% var theme = "dark"; %>
+
+<!-- CONTENT -->
+{{APP_TEMPLATE_CODE}}

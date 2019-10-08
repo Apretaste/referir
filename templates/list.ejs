@@ -1,0 +1,46 @@
+<div class="row">
+	<div class="col s12">
+		<ul class="tabs tabs-fixed-width">
+			<li class="tab"><a href="#" onclick="apretaste.send({command: 'REFERIR', data:{'theme':'<%= theme %>'}})">Invite y gane</a></li>
+			<li class="tab"><a href="#" class="active">Invitados</a></li> 
+		</ul>
+
+		<% if (invitations.length > 0) { %>
+			<% var total = 0; %>
+			<table class="striped">
+				<thead>
+					<tr>
+						<th>Invitado</th>
+						<th class="center">Ganancia</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% invitations.forEach(function(invitation) { %>
+						<% total += invitation.accepted * 0.5 %>
+						<tr>
+							<td>
+								<%= invitation.email_to %>
+								<br>
+								<small><%= invitation.send_date %></small>
+
+								<% if(invitation.accepted == 0 && invitation.days >= 3){ %>
+									<br>
+									<small><a onclick="remind('<%= invitation.email_to %>','<%= theme %>')">Recordar</a></small>
+								<% } %>
+							</td>
+							<td class="center">
+								§<%= invitation.accepted != 0 ? (invitation.accepted * 0.5).toFixed(2) : 0 %>
+							</td>
+						</tr>
+					<% }); %>
+					<tr>
+						<td><b>Total</b></td>
+						<td class="center"><b>§<%= total % 1 != 0 ? total.toFixed(2) : total %></b></td>
+					</tr>
+				</tbody>
+			</table>
+		<% } else { %>
+			<p>Usted no ha enviado ni recibido ninguna invitación por el momento. Invite a sus familiares y amigos y se mostrarán en esta pantalla.</p>
+		<% } %>
+	</div>
+</div>
