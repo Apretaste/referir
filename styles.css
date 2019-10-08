@@ -1,0 +1,9 @@
+.search-field > i{
+	position: absolute;
+	width: 3rem;
+	right: -8px;
+	top: 10px;
+	font-size: 2rem;
+	transition: color .2s;
+	color: #57b23b;
+}
