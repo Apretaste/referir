@@ -46,7 +46,7 @@ class Service
 	}
 
 	/**
-	 * Show the invitar form for the service Bolita 
+	 * Show the invitar form for the service Bolita
 	 *
 	 * @param Request
 	 * @param Response
@@ -149,5 +149,7 @@ class Service
 			"icon" => "sentiment_very_satisfied",
 			"text" => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
 		]);
+
+		Challenges::complete("invite-friend", $request->person->id);
 	}
 }
