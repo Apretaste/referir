@@ -143,6 +143,9 @@ class Service
 		if (!$resend) Connection::query("INSERT INTO _email_invitations(id_from, email_to) VALUES('{$request->person->id}','$email')");
 		else Connection::query("UPDATE _email_invitations SET send_date = NOW() WHERE id_from = '{$request->person->id}' AND email_to = '$email'");
 
+		// add the experience
+		Level::setExperience('INVITE_FRIEND', $request->person->id);
+
 		// success inviting the user
 		$response->setTemplate('message.ejs', [
 			"header" => "Su invitación ha sido enviada",
