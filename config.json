@@ -1,8 +1,9 @@
 {
   "name": "referir",
-  "version": "9",
   "description": "Invite a sus amigos y familiares a ser parte de la comunidad de Apretaste.",
   "category": "otros",
   "creator": "kuma@apretaste.org",
-  "listed": 1
+  "listed": 1,
+  "guest": true,
+  "caption": "Referir"
 }

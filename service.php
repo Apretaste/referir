@@ -1,39 +1,51 @@
 <?php
 
+use Apretaste\Notifications;
+use Apretaste\Money;
+use Apretaste\Person;
+use Apretaste\Request;
+use Apretaste\Response;
+use Framework\Database;
+use Apretaste\Challenges;
+use Apretaste\Level;
+use Framework\Utils;
+
 class Service
 {
 	/**
 	 * Show the invitation form
 	 *
-	 * @param Request
-	 * @param Response
-	 * @return Response
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \Framework\Alert
 	 */
-	public function _main(Request $request, Response $response)
+	public function _main(Request $request, Response &$response)
 	{
 		// get the theme
-		$theme = empty($request->input->data->theme) ? "light" : $request->input->data->theme;
+		$theme = empty($request->input->data->theme) ? 'light': $request->input->data->theme;
 
 		// send response to the view
-		$response->setCache("year");
+		$response->setCache('year');
 		$response->setLayout("$theme.ejs");
-		return $response->setTemplate("home.ejs");
+		$response->setTemplate('home.ejs');
 	}
 
 	/**
 	 * Show the list of invitations
 	 *
-	 * @param Request
-	 * @param Response
-	 * @return Response
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \Framework\Alert
 	 */
-	public function _list(Request $request, Response $response)
+	public function _list(Request $request, Response &$response)
 	{
 		// get the theme
-		$theme = empty($request->input->data->theme) ? "light" : $request->input->data->theme;
+		$theme = empty($request->input->data->theme) ? 'light': $request->input->data->theme;
 
 		// get list of people invited
-		$invitations = Connection::query("
+		$invitations = Database::query("
 			SELECT accepted, email_to, 
 				TIMESTAMPDIFF(DAY, send_date, NOW()) AS days,
 				DATE_FORMAT(send_date, '%e/%c/%Y') AS send_date
@@ -42,48 +54,52 @@ class Service
 
 		// send response to the view
 		$response->setLayout("$theme.ejs");
-		return $response->setTemplate("list.ejs", ["invitations" => $invitations]);
+		$response->setTemplate('list.ejs', ['invitations' => $invitations]);
 	}
 
 	/**
-	 * Show the invitar form for the service Bolita 
+	 * Show the invitar form for the service Bolita
 	 *
-	 * @param Request
-	 * @param Response
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \FeedException
+	 * @throws \Framework\Alert
 	 */
-	public function _bolita(Request $request, Response $response)
+	public function _bolita(Request $request, Response &$response)
 	{
-		$response = $this->_main($request, $response);
+		$this->_main($request, $response);
 		$response->setLayout('dark.ejs');
 	}
 
 	/**
 	 * Invite or remind a user to use the app
 	 *
-	 * @param Request
-	 * @param Response
-	 * @return void | Response
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \Framework\Alert
 	 */
-	public function _invitar(Request $request, Response $response)
+	public function _invitar(Request $request, Response &$response)
 	{
 		// get the email of the host
 		$email = $request->input->data->email;
-		$theme = empty($request->input->data->theme) ? "light" : $request->input->data->theme;
+		$theme = empty($request->input->data->theme) ? 'light': $request->input->data->theme;
 
 		// set the layout
 		$response->setLayout("$theme.ejs");
 
 		// do not invite a user twice
-		if (Utils::getPerson($email)) {
+		if (Person::find($email)) {
 			$response->setTemplate('message.ejs', [
-				"header" => "El usuario ya existe",
-				"icon" => "sentiment_very_dissatisfied",
-				"text" => "El email $email ya forma parte de nuestros usuarios, por lo cual no lo podemos invitar a la app."
+					'header' => 'El usuario ya existe',
+					'icon'   => 'sentiment_very_dissatisfied',
+					'text'   => "El email $email ya forma parte de nuestros usuarios, por lo cual no lo podemos invitar a la app."
 			]);
 		}
 
 		// get the days the invitation is due
-		$invitation = Connection::query("
+		$invitation = Database::query("
 			SELECT TIMESTAMPDIFF(DAY,send_date, NOW()) AS days 
 			FROM _email_invitations 
 			WHERE id_from = '{$request->person->id}' 
@@ -94,11 +110,12 @@ class Service
 		if (!empty($invitation)) {
 			$resend = $invitation[0]->days >= 3;
 			if (!$resend) {
-				return $response->setTemplate('message.ejs', [
-					"header" => "Lo sentimos",
-					"icon" => "sentiment_very_dissatisfied",
-					"text" => "Ya enviaste una invitación a $email hace menos de 3 días, por favor espera antes de reenviar la invitación."
+				$response->setTemplate('message.ejs', [
+						'header' => 'Lo sentimos',
+						'icon'   => 'sentiment_very_dissatisfied',
+						'text'   => "Ya enviaste una invitación a $email hace menos de 3 días, por favor espera antes de reenviar la invitación."
 				]);
+				return;
 			}
 		}
 
@@ -109,8 +126,8 @@ class Service
 		$name = !empty($request->person->first_name) ? $request->person->first_name : '@' . $request->person->username;
 
 		// create the invitation text
-		if ($theme == "dark") {
-			$link = "http://bit.ly/labolita";
+		if ($theme==='dark') {
+			$link = 'http://bit.ly/labolita';
 			$subject = "$name te ha invitado a la bolita";
 			$body = "
 				<p>Algo debes tener, porque <b>@{$request->person->username}</b> te invitó a La Bolita.</p>
@@ -120,7 +137,7 @@ class Service
 				<p>Si presentas alguna dificultad, escríbenos a $supportEmail y siempre estaremos atentos para ayudarte.</p>
 				<p>Bienvenido a La Bolita!</p>";
 		} else {
-			$link = "http://bit.ly/32gPZns";
+			$link = 'http://bit.ly/32gPZns';
 			$subject = "$name te ha invitado a la app";
 			$body = "
 				<p>Algo debes tener, porque <b>@{$request->person->username}</b> te invitó a ser parte nuestra vibrante comunidad en Ap!</p>
@@ -136,24 +153,24 @@ class Service
 		$invitationEmail->to = $email;
 		$invitationEmail->subject = $subject;
 		$invitationEmail->body = $body;
-		$invitationEmail->service = "referir";
+		$invitationEmail->service = 'referir';
 		$invitationEmail->send();
 
 		// save invitation into the database
-		if (!$resend) Connection::query("INSERT INTO _email_invitations(id_from, email_to) VALUES('{$request->person->id}','$email')");
-		else Connection::query("UPDATE _email_invitations SET send_date = NOW() WHERE id_from = '{$request->person->id}' AND email_to = '$email'");
+		if (!$resend) Database::query("INSERT INTO _email_invitations(id_from, email_to) VALUES('{$request->person->id}','$email')");
+		else Database::query("UPDATE _email_invitations SET send_date = NOW() WHERE id_from = '{$request->person->id}' AND email_to = '$email'");
 
 		// complete the challenge
-		Challenges::complete("invite-friend", $request->person->id);
+		Challenges::complete('invite-friend', $request->person->id);
 
 		// add the experience
 		Level::setExperience('INVITE_FRIEND', $request->person->id);
 
 		// success inviting the user
 		$response->setTemplate('message.ejs', [
-			"header" => "Su invitación ha sido enviada",
-			"icon" => "sentiment_very_satisfied",
-			"text" => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
+				'header' => 'Su invitación ha sido enviada',
+				'icon'   => 'sentiment_very_satisfied',
+				'text'   => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
 		]);
 	}
 }
