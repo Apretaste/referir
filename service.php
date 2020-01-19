@@ -1,7 +1,5 @@
 <?php
 
-use Apretaste\Notifications;
-use Apretaste\Money;
 use Apretaste\Person;
 use Apretaste\Request;
 use Apretaste\Response;
@@ -15,7 +13,7 @@ class Service
 	/**
 	 * Show the invitation form
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -34,7 +32,7 @@ class Service
 	/**
 	 * Show the list of invitations
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -60,7 +58,7 @@ class Service
 	/**
 	 * Show the invitar form for the service Bolita
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \FeedException
@@ -75,7 +73,7 @@ class Service
 	/**
 	 * Invite or remind a user to use the app
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -93,8 +91,8 @@ class Service
 		if (Person::find($email)) {
 			$response->setTemplate('message.ejs', [
 					'header' => 'El usuario ya existe',
-					'icon'   => 'sentiment_very_dissatisfied',
-					'text'   => "El email $email ya forma parte de nuestros usuarios, por lo cual no lo podemos invitar a la app."
+					'icon' => 'sentiment_very_dissatisfied',
+					'text' => "El email $email ya forma parte de nuestros usuarios, por lo cual no lo podemos invitar a la app."
 			]);
 		}
 
@@ -112,8 +110,8 @@ class Service
 			if (!$resend) {
 				$response->setTemplate('message.ejs', [
 						'header' => 'Lo sentimos',
-						'icon'   => 'sentiment_very_dissatisfied',
-						'text'   => "Ya enviaste una invitación a $email hace menos de 3 días, por favor espera antes de reenviar la invitación."
+						'icon' => 'sentiment_very_dissatisfied',
+						'text' => "Ya enviaste una invitación a $email hace menos de 3 días, por favor espera antes de reenviar la invitación."
 				]);
 				return;
 			}
@@ -126,7 +124,7 @@ class Service
 		$name = !empty($request->person->first_name) ? $request->person->first_name : '@' . $request->person->username;
 
 		// create the invitation text
-		if ($theme==='dark') {
+		if ($theme === 'dark') {
 			$link = 'http://bit.ly/labolita';
 			$subject = "$name te ha invitado a la bolita";
 			$body = "
@@ -157,8 +155,11 @@ class Service
 		$invitationEmail->send();
 
 		// save invitation into the database
-		if (!$resend) Database::query("INSERT INTO _email_invitations(id_from, email_to) VALUES('{$request->person->id}','$email')");
-		else Database::query("UPDATE _email_invitations SET send_date = NOW() WHERE id_from = '{$request->person->id}' AND email_to = '$email'");
+		if (!$resend) {
+			Database::query("INSERT INTO _email_invitations(id_from, email_to) VALUES('{$request->person->id}','$email')");
+		} else {
+			Database::query("UPDATE _email_invitations SET send_date = NOW() WHERE id_from = '{$request->person->id}' AND email_to = '$email'");
+		}
 
 		// complete the challenge
 		Challenges::complete('invite-friend', $request->person->id);
@@ -169,8 +170,8 @@ class Service
 		// success inviting the user
 		$response->setTemplate('message.ejs', [
 				'header' => 'Su invitación ha sido enviada',
-				'icon'   => 'sentiment_very_satisfied',
-				'text'   => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
+				'icon' => 'sentiment_very_satisfied',
+				'text' => "Gracias por invitar a $email a ser parte de nuestra comunidad, si se une serás notificado y recibirás §0.5 de crédito."
 		]);
 	}
 }
